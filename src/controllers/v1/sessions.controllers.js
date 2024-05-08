@@ -4,6 +4,16 @@ const ms = require('ms');
 const redisClient = require('../../../config/redis');
 const { RefreshToken } = require('../../models/refresh_token');
 
+const show = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if(!user) return res.status(404).json({error: 'User not found'});
+    return res.status(200).json({user: user.toJSON()});
+  } catch(error) {
+    return res.status(500).json({error: error.message});
+  }
+};
+
 const signUp = async (req, res) => {
   try {
     const userWithEmail = await User.findOne({ email: req.body.user.email });
@@ -76,4 +86,4 @@ const signOut = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn, refreshToken, signOut };
+module.exports = { signUp, signIn, refreshToken, signOut, show };
