@@ -44,13 +44,16 @@ const validationRules = () => {
           throw new Error('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character');
         }
         return true;
-      })
+      }),
+    body('user.age')
+      .exists({ checkNull: true, checkFalsy: true }).withMessage('Age is Required')
+      .isInt().withMessage("Age must be an Integer")
   ];
 };
 
 const validate = (req, res, next) => {
   const validationErrors = validationResult(req);
-  if(validationErrors.isEmpty()) {
+  if (validationErrors.isEmpty()) {
     req.params = matchedData(req);
     return next();
   }
@@ -59,7 +62,7 @@ const validate = (req, res, next) => {
 
   validationErrors.array().map((error) => { errors[error.path] = error.msg; });
 
-  return res.status(422).json({errors});
+  return res.status(422).json({ errors });
 };
 
 module.exports = {
